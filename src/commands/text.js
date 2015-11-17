@@ -48,10 +48,8 @@ var TextBlock = P(Node, function(_, super_) {
     return optWhitespace
       .then(string('{')).then(regex(/^[^}]*/)).skip(string('}'))
       .map(function(text) {
-        // TODO: is this the correct behavior when parsing
-        // the latex \text{} ?  This violates the requirement that
-        // the text contents are always nonempty.  Should we just
-        // disown the parent node instead?
+        if (text.length === 0) return;
+
         TextPiece(text).adopt(textBlock, 0, 0);
         return textBlock;
       })
@@ -64,7 +62,13 @@ var TextBlock = P(Node, function(_, super_) {
     });
   };
   _.text = function() { return '"' + this.textContents() + '"'; };
-  _.latex = function() { return '\\text{' + this.textContents() + '}'; };
+  _.latex = function() {
+    var contents = this.textContents();
+
+    if (contents.length === 0) return '';
+
+    return '\\text{' + this.textContents() + '}';
+  };
   _.html = function() {
     return (
         '<span class="mq-text-mode" mathquill-command-id='+this.id+'>'
@@ -122,7 +126,7 @@ var TextBlock = P(Node, function(_, super_) {
     // insert cursor at approx position in DOMTextNode
     var avgChWidth = this.jQ.width()/this.text.length;
     var approxPosition = Math.round((pageX - this.jQ.offset().left)/avgChWidth);
-    if (approxPosition <= 0) cursor.insAtLeftEnd(this);
+    if (approxPosition <= 0 || textPc === null) cursor.insAtLeftEnd(this);
     else if (approxPosition >= textPc.text.length) cursor.insAtRightEnd(this);
     else cursor.insLeftOf(textPc.splitRight(approxPosition));
 
@@ -170,12 +174,17 @@ var TextBlock = P(Node, function(_, super_) {
   function fuseChildren(self) {
     self.jQ[0].normalize();
 
-    var textPcDom = self.jQ[0].firstChild;
-    var textPc = TextPiece(textPcDom.data);
-    textPc.jQadd(textPcDom);
+    var textNodes = self.jQ.contents().filter(function (i, el) { return el.nodeType === window.Node.TEXT_NODE; });
+    var textPc = null;
+
+    if (textNodes.length > 0) {
+      var textPcDom = textNodes[0];
+      textPc = TextPiece(textPcDom.data);
+      textPc.jQadd(textPcDom);
+    }
 
     self.children().disown();
-    return textPc.adopt(self, 0, 0);
+    return textPc !== null ? textPc.adopt(self, 0, 0) : null;
   }
 
   _.focus = MathBlock.prototype.focus;
