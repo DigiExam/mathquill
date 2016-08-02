@@ -31,7 +31,22 @@ for (var prop in transformPropNames) {
 
 if (transformPropName) {
   scale = function(jQ, x, y) {
-    jQ.css(transformPropName, 'scale('+x+','+y+')');
+    mapTransformPropNamesToDashFormat = {
+      transform: 'transform',
+      WebkitTransform: '-webkit-transform',
+      MozTransform: '-moz-transform',
+      OTransform: '-o-transform',
+      msTransform: '-ms-transform'
+    };
+
+    var styleValue = "";
+    var transformValue = 'scale(' + x + ',' + y +')';
+    if (transformPropName !== 'WebkitTransform') {
+      styleValue += mapTransformPropNamesToDashFormat.WebkitTransform + ':' + transformValue + ';';
+    }
+    styleValue += mapTransformPropNamesToDashFormat[transformPropName] + ':' + transformValue;
+
+    jQ.attr('style', styleValue)
   };
 }
 else if ('filter' in div_style) { //IE 6, 7, & 8 fallback, see https://github.com/laughinghan/mathquill/wiki/Transforms
