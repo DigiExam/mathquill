@@ -221,6 +221,9 @@ LatexCmds.closecurlybrace = LatexCmds.rbrace = bind(VanillaSymbol, '\\rbrace ', 
 LatexCmds.lbrack = bind(VanillaSymbol, '[');
 LatexCmds.rbrack = bind(VanillaSymbol, ']');
 
+LatexCmds.caret = bind(VanillaSymbol,'\\caret','^');
+LatexCmds.underscore = bind(VanillaSymbol,'\\underscore','_');
+
 //various symbols
 LatexCmds.slash = bind(VanillaSymbol, '/');
 LatexCmds.vert = bind(VanillaSymbol,'|');
