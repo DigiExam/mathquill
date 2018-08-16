@@ -232,7 +232,7 @@ LatexCmds.nabla = LatexCmds.del = bind(VanillaSymbol,'\\nabla ','&nabla;');
 LatexCmds.hbar = bind(VanillaSymbol,'\\hbar ','&#8463;');
 
 LatexCmds.AA = LatexCmds.Angstrom = LatexCmds.angstrom =
-  bind(VanillaSymbol,'\\text\\AA ','&#8491;');
+  bind(VanillaSymbol,'\\AA ','&#8491;');
 
 LatexCmds.ring = LatexCmds.circ = LatexCmds.circle =
   bind(VanillaSymbol,'\\circ ','&#8728;');
